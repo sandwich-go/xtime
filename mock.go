@@ -223,9 +223,15 @@ func (m *mock) Until(t time.Time) time.Duration {
 	return t.Sub(m.Now())
 }
 
-// Sleep pauses the goroutine for the given duration on the mock clock.
-// The clock must be moved forward in a separate goroutine.
+// Sleep frozen模式下需要特殊注意
 func (m *mock) Sleep(d time.Duration) {
+	m.rw.RLock()
+	if m.frozen {
+		m.cc.SeelpProviderUnderFrozen(m, d)
+		m.rw.RUnlock()
+		return
+	}
+	m.rw.RUnlock()
 	<-m.After(d)
 }
 

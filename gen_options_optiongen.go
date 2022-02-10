@@ -19,6 +19,8 @@ type Options struct {
 	TickAtMockNow bool
 	// annotation@NowProvider(comment="系统时间")
 	NowProvider NowProvider
+	// annotation@SeelpProviderUnderFreeze(comment="Frozen模式下sleep将再次Freeze一次,将之间向前推进")
+	SeelpProviderUnderFrozen SeelpProviderUnderFrozen
 	// annotation@Debug(comment="debug模式下以会向DebugWriter写日志")
 	Debug bool
 	// annotation@DebugWriter(comment="调试日志输出")
@@ -88,6 +90,15 @@ func WithNowProvider(v NowProvider) Option {
 	}
 }
 
+// WithSeelpProviderUnderFrozen option func for filed SeelpProviderUnderFrozen
+func WithSeelpProviderUnderFrozen(v SeelpProviderUnderFrozen) Option {
+	return func(cc *Options) Option {
+		previous := cc.SeelpProviderUnderFrozen
+		cc.SeelpProviderUnderFrozen = v
+		return WithSeelpProviderUnderFrozen(previous)
+	}
+}
+
 // WithDebug debug模式下以会向DebugWriter写日志
 func WithDebug(v bool) Option {
 	return func(cc *Options) Option {
@@ -125,6 +136,9 @@ func newDefaultOptions() *Options {
 		WithNowProvider(func() time.Time {
 			return timeNow()
 		}),
+		WithSeelpProviderUnderFrozen(func(m Mock, d time.Duration) {
+			m.Freeze(m.Now().Add(d))
+		}),
 		WithDebug(false),
 		WithDebugWriter(os.Stdout),
 	} {
@@ -139,8 +153,11 @@ func (cc *Options) GetGosched() func()                      { return cc.Gosched 
 func (cc *Options) GetTickIntervalUnderMock() time.Duration { return cc.TickIntervalUnderMock }
 func (cc *Options) GetTickAtMockNow() bool                  { return cc.TickAtMockNow }
 func (cc *Options) GetNowProvider() NowProvider             { return cc.NowProvider }
-func (cc *Options) GetDebug() bool                          { return cc.Debug }
-func (cc *Options) GetDebugWriter() io.Writer               { return cc.DebugWriter }
+func (cc *Options) GetSeelpProviderUnderFrozen() SeelpProviderUnderFrozen {
+	return cc.SeelpProviderUnderFrozen
+}
+func (cc *Options) GetDebug() bool            { return cc.Debug }
+func (cc *Options) GetDebugWriter() io.Writer { return cc.DebugWriter }
 
 // OptionsVisitor visitor interface for Options
 type OptionsVisitor interface {
@@ -148,6 +165,7 @@ type OptionsVisitor interface {
 	GetTickIntervalUnderMock() time.Duration
 	GetTickAtMockNow() bool
 	GetNowProvider() NowProvider
+	GetSeelpProviderUnderFrozen() SeelpProviderUnderFrozen
 	GetDebug() bool
 	GetDebugWriter() io.Writer
 }
