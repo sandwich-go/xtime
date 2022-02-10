@@ -5,6 +5,34 @@ import (
 	"time"
 )
 
+// TickerInterface 便于逻辑层传递Tikcer时使用，兼容系统接口与MockTicker
+type TickerInterface interface {
+	Stop()
+	Reset(d time.Duration)
+}
+
+// TickerChan 获取底层ticker的chan
+func TickerChan(t TickerInterface) <-chan time.Time {
+	if st, ok := t.(*time.Ticker); ok {
+		return st.C
+	}
+	return t.(*MockTicker).C
+}
+
+// TimerInterface 便于逻辑层传递Tikcer时使用，兼容系统接口与MockTimer
+type TimerInterface interface {
+	Stop() bool
+	Reset(d time.Duration) bool
+}
+
+// TimerChan 获取底层timer的chan
+func TimerChan(t TimerInterface) <-chan time.Time {
+	if st, ok := t.(*time.Timer); ok {
+		return st.C
+	}
+	return t.(*MockTimer).C
+}
+
 // Clock 兼容系统timer方法
 type Clock interface {
 	After(d time.Duration) <-chan time.Time
