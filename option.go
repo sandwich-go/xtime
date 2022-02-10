@@ -7,7 +7,7 @@ import (
 )
 
 type NowProvider = func() time.Time
-type SeelpProviderUnderFrozen = func(m Mock, d time.Duration)
+type SleepProviderUnderFrozen = func(m Mock, d time.Duration)
 
 var timeNow = time.Now
 var timeSleep = time.Sleep
@@ -25,8 +25,8 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"NowProvider": NowProvider(func() time.Time {
 			return timeNow()
 		}),
-		// annotation@SeelpProviderUnderFreeze(comment="Frozen模式下sleep将再次Freeze一次,将时间向前推进")
-		"SeelpProviderUnderFrozen": SeelpProviderUnderFrozen(func(m Mock, d time.Duration) {
+		// annotation@SleepProviderUnderFrozen(comment="Frozen模式下sleep将再次Freeze一次,将时间向前推进")
+		"SleepProviderUnderFrozen": SleepProviderUnderFrozen(func(m Mock, d time.Duration) {
 			m.Freeze(m.Now().Add(d))
 		}),
 		// annotation@Debug(comment="debug模式下以会向DebugWriter写日志")

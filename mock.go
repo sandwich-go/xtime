@@ -227,7 +227,7 @@ func (m *mock) Until(t time.Time) time.Duration {
 func (m *mock) Sleep(d time.Duration) {
 	m.rw.RLock()
 	if m.frozen {
-		m.cc.SeelpProviderUnderFrozen(m, d)
+		m.cc.SleepProviderUnderFrozen(m, d)
 		m.rw.RUnlock()
 		return
 	}
