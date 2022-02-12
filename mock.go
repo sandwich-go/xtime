@@ -202,6 +202,8 @@ func (m *mock) Now() time.Time {
 	}
 	return m.nowWithoutLock()
 }
+func (m *mock) Unix() int64      { return m.Now().Unix() }
+func (m *mock) UnixMilli() int64 { return m.Now().UnixNano() / int64(time.Millisecond) }
 
 func (m *mock) nowWithoutLock() time.Time {
 	if m.frozen {

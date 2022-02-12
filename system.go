@@ -13,8 +13,9 @@ func (c *clock) AfterFunc(d time.Duration, f func()) *MockTimer {
 	return &MockTimer{timer: time.AfterFunc(d, f)}
 }
 
-func (c *clock) Now() time.Time { return time.Now() }
-
+func (c *clock) Now() time.Time                  { return time.Now() }
+func (c *clock) Unix() int64                     { return time.Now().Unix() }
+func (c *clock) UnixMilli() int64                { return time.Now().UnixNano() / int64(time.Millisecond) }
 func (c *clock) Since(t time.Time) time.Duration { return time.Since(t) }
 
 func (c *clock) Until(t time.Time) time.Duration { return time.Until(t) }
