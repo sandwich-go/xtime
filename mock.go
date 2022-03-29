@@ -115,6 +115,10 @@ func (m *mock) Return() {
 	m.notifyContueTick()
 }
 
+func (m *mock) Mocked() bool {
+	return true
+}
+
 // Freeze 静止在指定时间
 func (m *mock) Freeze(t time.Time) {
 	m.rw.Lock()

@@ -53,6 +53,7 @@ type Cop interface {
 	Travel(t time.Time)
 	Scale(scale float64)
 	Return()
+	Mocked() bool
 	ApplyOption(...Option) []Option
 }
 
