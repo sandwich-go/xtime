@@ -1,4 +1,7 @@
 # xtime
+
+模拟Golang标准库Time接口，提供Freeze,Travel等功能。
+
 ```golang
 type Clock interface {
 	After(d time.Duration) <-chan time.Time
