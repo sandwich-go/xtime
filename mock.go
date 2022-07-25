@@ -10,7 +10,7 @@ import (
 var _ Mock = &mock{}
 
 func newMock(opts *Options) Mock {
-	m := &mock{cc: opts}
+	m := &mock{cc: opts, scale: 1}
 	m.continueTick = make(chan struct{}, 1)
 	m.tickStopChan = make(chan struct{})
 	m.freshTicker()
