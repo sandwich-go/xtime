@@ -2,6 +2,8 @@
 
 模拟Golang标准库Time接口，提供Freeze,Travel等功能。
 
+Run xtime Example: [![run on repl.it](https://repl.it/badge/github/timestee/XTime)](https://repl.it//@timestee/XTime#main.go)
+
 ```golang
 type Clock interface {
 	After(d time.Duration) <-chan time.Time
