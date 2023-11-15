@@ -10,10 +10,16 @@ import (
 var _ Mock = &mock{}
 
 func newMock(opts *Options) Mock {
+	m := newMockNotStart(opts)
+	m.start()
+	return m
+}
+
+// newMockNotStart 构造但是不自动运行，不占据资源
+func newMockNotStart(opts *Options) *mock {
 	m := &mock{cc: opts, scale: 1}
 	m.continueTick = make(chan struct{}, 1)
 	m.tickStopChan = make(chan struct{})
-	m.freshTicker()
 	return m
 }
 
@@ -28,6 +34,13 @@ type mock struct {
 	timers       clockTimers // tickers & timers
 	continueTick chan struct{}
 	tickStopChan chan struct{}
+	startOnce    sync.Once
+}
+
+func (m *mock) start() {
+	m.startOnce.Do(func() {
+		m.freshTicker()
+	})
 }
 
 func (m *mock) ApplyOption(opt ...Option) []Option {

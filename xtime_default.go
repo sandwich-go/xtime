@@ -5,21 +5,26 @@ import (
 	"time"
 )
 
-var defaultMock = &mock{}
+var defaultMock = newMockNotStart(newDefaultOptions())
 
-func ApplyOption(opt ...Option)                      { defaultMock.ApplyOption(opt...) }
-func Now() time.Time                                 { return defaultMock.Now() }
-func Since(t time.Time) time.Duration                { return defaultMock.Since(t) }
-func Until(t time.Time) time.Duration                { return defaultMock.Until(t) }
-func Sleep(d time.Duration)                          { defaultMock.Sleep(d) }
-func Tick(d time.Duration) <-chan time.Time          { return defaultMock.Tick(d) }
-func After(d time.Duration) <-chan time.Time         { return defaultMock.After(d) }
-func AfterFunc(d time.Duration, f func()) *MockTimer { return defaultMock.AfterFunc(d, f) }
-func Timer(d time.Duration) *MockTimer               { return defaultMock.Timer(d) }
-func NewTicker(d time.Duration) *MockTicker          { return defaultMock.NewTicker(d) }
+func getDefaultMock() Mock {
+	defaultMock.start()
+	return defaultMock
+}
+
+func ApplyOption(opt ...Option)                      { getDefaultMock().ApplyOption(opt...) }
+func Now() time.Time                                 { return getDefaultMock().Now() }
+func Since(t time.Time) time.Duration                { return getDefaultMock().Since(t) }
+func Until(t time.Time) time.Duration                { return getDefaultMock().Until(t) }
+func Sleep(d time.Duration)                          { getDefaultMock().Sleep(d) }
+func Tick(d time.Duration) <-chan time.Time          { return getDefaultMock().Tick(d) }
+func After(d time.Duration) <-chan time.Time         { return getDefaultMock().After(d) }
+func AfterFunc(d time.Duration, f func()) *MockTimer { return getDefaultMock().AfterFunc(d, f) }
+func Timer(d time.Duration) *MockTimer               { return getDefaultMock().Timer(d) }
+func NewTicker(d time.Duration) *MockTicker          { return getDefaultMock().NewTicker(d) }
 func WithDeadline(parent context.Context, d time.Time) (context.Context, context.CancelFunc) {
-	return defaultMock.WithDeadline(parent, d)
+	return getDefaultMock().WithDeadline(parent, d)
 }
 func WithTimeout(parent context.Context, t time.Duration) (context.Context, context.CancelFunc) {
-	return defaultMock.WithTimeout(parent, t)
+	return getDefaultMock().WithTimeout(parent, t)
 }
