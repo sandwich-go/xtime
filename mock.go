@@ -188,11 +188,11 @@ func (m *mock) runNextTimer(max time.Time) bool {
 		return false
 	}
 	m.debugLogN("runNextTimer next:%s max:%s", next, max)
-	m.rw.Unlock()
 	now := next
 	if m.cc.TickAtMockNow {
 		now = m.nowWithoutLock()
 	}
+	m.rw.Unlock()
 	t.Tick(now) // 如果在Travel时有一个执行频繁的ticker，可能会导致ticker的执行一直占用tick协程导致其他的timer无法被及时执行
 	return true
 }
@@ -213,10 +213,8 @@ func (m *mock) AfterFunc(d time.Duration, f func()) *MockTimer {
 
 // Now returns the current wall time on the mock clock.
 func (m *mock) Now() time.Time {
-	if m.frozen || m.traveled {
-		m.rw.RLock()
-		defer m.rw.RUnlock()
-	}
+	m.rw.RLock()
+	defer m.rw.RUnlock()
 	return m.nowWithoutLock()
 }
 func (m *mock) Unix() int64      { return m.Now().Unix() }
